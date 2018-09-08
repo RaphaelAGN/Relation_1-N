@@ -1,173 +1,125 @@
-/* Autores: Tulio N. Polido Lopes, Joao Victor da Silva, Gustavo Lescowicz Kotarsky, Temistocles Altivo Schwartz 
- * Data: 21/08/2018
- * */
 import java.io.*;
 
-public class Filme {
-	private int id;
-	private String titulo;
-	private String tituloOriginal;
-	private String pais;
-	private short ano;
-	private short duracao;
-	private String diretor;
-	private String sinopse;
+//Classe construtora dos filmes
+public class Filme{
+   private int id;
+   private String titulo;
+   private String titulo_ori;
+   private String pais;
+   private short ano;
+   private short duracao_min;
+   private String diretor;
+   private String sinopse;
+   private int idGenero;
 
-	public Filme() {
-	}//end Filme()
+   public byte[] getByteArray() throws IOException {
+      ByteArrayOutputStream filmes = new ByteArrayOutputStream();
+      DataOutputStream saida = new DataOutputStream(filmes);
+   
+      saida.writeInt(this.id);
+      saida.writeUTF(this.titulo);
+      saida.writeUTF(this.titulo_ori);
+      saida.writeUTF(this.pais);
+      saida.writeShort(this.ano);
+      saida.writeShort(this.duracao_min);
+      saida.writeUTF(this.diretor);
+      saida.writeUTF(this.sinopse);
+      saida.writeInt(this.idGenero);
+   
+      return filmes.toByteArray();
+   }//end getByteArray
 
-	/*
-	 * Construtor da classe
-	 * @param titulo do filme
-	 * @param titulo Original do filme
-	 * @param pais em que foi produzido
-	 * @param ano de lancamento
-	 * @param duracao em min do filme
-	 * @param diretor do filme
-	 * @param sinopse oficial do filme
-	 * @return Instancia de filme criada com parametros selecionados
-	 * */
-	public Filme(String titulo, String tituloOriginal, String pais, short ano, short duracao, String diretor, String sinopse) {
-		this.titulo = titulo;
-		this.tituloOriginal = tituloOriginal;
-		this.pais = pais;
-		this.ano = ano;
-		this.duracao = duracao;
-		this.diretor = diretor;
-		this.sinopse = sinopse;
-	}//end Filme()
+   public void setByteArray(byte[] bytes) throws IOException {
+      ByteArrayInputStream filmes = new ByteArrayInputStream(bytes);
+      DataInputStream entrada = new DataInputStream(filmes);
+   
+      setIDFilme(entrada.readInt());
+      setTitulo(entrada.readUTF());
+      setTituloOri(entrada.readUTF());
+      setPais(entrada.readUTF());
+      setAno(entrada.readShort());
+      setDuracao(entrada.readShort());
+      setDiretor(entrada.readUTF());
+      setSinopse(entrada.readUTF());
+      setIDGenero(entrada.readInt());
+   }//end setByteArray
 
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
+	//Construtores
+   public Filme(){}
+   public Filme(String titulo){
+      setTitulo(titulo);
+   }
 
-	public void setTituloOriginal(String tituloOriginal) {
-		this.tituloOriginal = tituloOriginal;
-	}
+	//Setters
+   public void setIDFilme(int id) { 
+      this.id = id; 
+   }
+   public void setTitulo(String titulo) { 
+      this.titulo = titulo; 
+   }
+   
+   public void setTituloOri(String titulo_ori) { 
+      this.titulo_ori = titulo_ori; 
+   }
+   
+   public void setPais(String pais) { 
+      this.pais = pais; 
+   }
+   
+   public void setAno(short ano) { 
+      this.ano = ano; 
+   }
+   
+   public void setDuracao(short duracao) { 
+      this.duracao_min = duracao; 
+   }
+   
+   public void setDiretor(String diretor) { 
+      this.diretor = diretor; 
+   }
+   
+   public void setSinopse(String sinopse) { 
+      this.sinopse = sinopse; 
+   }
+   
+   public void setIDGenero(int idGenero) { 
+      this.idGenero = idGenero; 
+   }
 
-	public void setPais(String pais) {
-		this.pais = pais;
-	}
+	// Getters
+   public int getId() { 
+      return this.id; 
+   }
+   
+   public String getTitulo() { 
+      return this.titulo; 
+   }
+   
+   public String getTituloOri() { 
+      return this.titulo_ori; 
+   }
+   public String getPais() { 
+      return this.pais; 
+   }
+   
+   public short getAno() { 
+      return this.ano; 
+   }
+   
+   public short getDuracao() { 
+      return this.duracao_min; 
+   }
+   
+   public String getDiretor() { 
+      return this.diretor; 
+   }
+   
+   public String getSinopse() { 
+      return this.sinopse; 
+   }
+   
+   public int getIDGenero() { 
+      return this.idGenero; 
+   }
 
-	public void setAno(short ano) {
-		this.ano = ano;
-	}
-
-	public void setDuracao(short duracao) {
-		this.duracao = duracao;
-	}
-
-	public void setDiretor(String diretor) {
-		this.diretor = diretor;
-	}
-
-	public void setId(int id){
-		this.id = id;
-	}
-
-	public void setSinopse(String sinopse) {
-		this.sinopse = sinopse;
-	}
-
-	public String getTitulo () {
-		return this.titulo;			
-	}
-	
-	public String getTituloOriginal () {
-		return this.tituloOriginal;
-	}
-
-	public String getPais () {
-		return this.pais;
-	}
-	
-	public int getAno () {
-		return this.ano;
-	}
-	
-	public int getDuracao () {
-		return this.duracao;
-	}
-	
-	public String getDiretor () {
-		return this.diretor;
-	}
-	
-	public String getSinopse () {
-		return this.sinopse;
-	}
-
-	public int getID() {
-		return this.id;
-	}
-
-	/*
-	 * Retorna um vetor de bytes(registro) do Filme corrente
-	 * @return vetor de bytes do registro
-	 * @throws IOException
-	 * */	
-	public byte[] getByteArray() throws IOException {
-		ByteArrayOutputStream dados = new ByteArrayOutputStream();
-		DataOutputStream saida = new DataOutputStream(dados);
-		
-		saida.writeInt(this.id);
-		saida.writeUTF(this.titulo);
-		saida.writeUTF(this.tituloOriginal);
-		saida.writeUTF(this.pais);
-		saida.writeShort(this.ano);
-		saida.writeShort(this.duracao);
-		saida.writeUTF(this.diretor);
-		saida.writeUTF(this.sinopse);
-		
-
-		return dados.toByteArray();
-	}//end getByteArray()
-
-	/*
-	 * Recebe um vetor de bytes com informacoes de um filme e seta no Filme corrente
-	 * @param vetor de bytes com informacoes de um filme do arquivo
-	 * @throws IOException
-	 * */
-	public void setByteArray(byte[] bytes) throws IOException {
-		ByteArrayInputStream dados = new ByteArrayInputStream(bytes);
-		DataInputStream entrada = new DataInputStream(dados);
-
-		this.id = entrada.readInt();
-		this.titulo = entrada.readUTF();
-		this.tituloOriginal = entrada.readUTF();
-		this.pais = entrada.readUTF();
-		this.ano = entrada.readShort();
-		this.duracao = entrada.readShort();
-		this.diretor = entrada.readUTF();
-		this.sinopse = entrada.readUTF();
-		
-	}//end setByteArray()
-
-	/*
-	 * Escreve o objeto filme no arquivo
-	 * @param Instancia de RAF com o arquivo aberto
-	 * @throws IOException
-	 * */
-	public void writeObject(RandomAccessFile raf) throws IOException {
-		byte[] dados = this.getByteArray();
-		raf.writeChar(' ');
-		raf.writeShort(dados.length);
-		raf.write(dados);
-	}//end writeObject()
-
-	/*
-	 * Retorna uma String com as informacoes do filme
-	 * @return Classe corrente em formato de string
-	 * */
-	public String toString(){
-		return "/****\n* Titulo: "+this.titulo+
-			"\n* Titulo Original: "+this.tituloOriginal+
-			"\n* Diretor: "+this.diretor+
-			"\n* Pais: "+this.pais+
-			"\n* Duracao: "+this.duracao+
-			"\n* Ano: "+this.ano+
-			"\n* Sinopse: "+this.sinopse+
-			"\n* ID: "+this.id+"\n*****/";
-
-	}//end toString()
-}//end Filme
+}//end class Filme
