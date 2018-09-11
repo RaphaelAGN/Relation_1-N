@@ -7,81 +7,89 @@ public class CRUD{
    public static void main(String[] args) throws IOException {
       Controle ct = new Controle("filmes.db");
       Controle ctg = new Controle("generos.db");
+      Controle index = new Controle("index.db");
    
       Scanner s = new Scanner(System.in);
       
-      //menu de generos
-      int escolha;
-      String menu1 = "\nMenu de opcoes de generos: \n0. Ir para o menu de filmes. \n1. Adicionar Genero\n2. Alterar Genero\n3. Excluir Genero\n4. Busca\n";
+      int escolha = -1;
       
-      System.out.println(menu1);
-      System.out.print("O que deseja fazer: ");
-      escolha = s.nextInt();
-      
-      while(escolha!=0){
-         
-         switch(escolha){
-            case 1:
-               adicionarGenero(ctg);
-               break;
-            
-            case 2:
-               //alterarGenero(ct);
-               break;
-            
-            case 3:
-               //excluirGenero(ct);
-               break;
-            
-            case 4:
-               buscarGenero(ctg);
-               break;
-            
-            default:
-               System.out.print("\nNenhuma das opcoes foi escolhida. Digite apenas numeros de 0 a 4.\n");
-         }
-         
-         System.out.println(menu1);
-         System.out.print("O que deseja fazer: ");
+      while(escolha != 0){
+         System.out.println("---------------------------------\nMain Menu:\n"+
+               	"0 - Sair;\n"+
+               	"1 - Menu de Generos;\n"+
+               	"2 - Menu de Filmes\n------------------------------------");
          escolha = s.nextInt();
-      }//fim while generos
-      
-      //menu de filmes
-      String menu2 = "\nMenu de opcoes de filmes: \n0. Encerrar o processo. \n1. Adicionar Filme\n2. Alterar Filme\n3. Excluir Filme\n4. Busca\n";
-         
-      System.out.println(menu2);
-      System.out.print("O que deseja fazer: ");
-      escolha = s.nextInt();
-
-      while(escolha!=0){
-         
-         switch(escolha){
-            case 1:
-               adicionar(ct);
-               break;
+         if(escolha == 1){
+            while(escolha != -1){
+               String menu1 = "\nMenu de opcoes de generos: \n0. Voltar para o main menu. \n1. Adicionar Genero\n2. Alterar Genero\n3. Excluir Genero\n4. Busca\n";
             
-            case 2:
-               alterar(ct);
-               break;
+               System.out.println(menu1);
+               System.out.print("O que deseja fazer: ");
+               escolha = s.nextInt();
             
-            case 3:
-               excluir(ct);
-               break;
-            
-            case 4:
-               buscar(ct);
-               break;
+               switch(escolha){
+                  case 0:
+                     escolha = -1;
+                     break;
                   
-            default:
-               System.out.print("\nNenhuma das opcoes foi escolhida. Digite apenas numeros de 0 a 4.\n");
-         }
+                  case 1:
+                     adicionarGenero(ctg, index);
+                     break;
+               
+                  case 2:
+                  //alterarGenero(ct);
+                     break;
+               
+                  case 3:
+                  //excluirGenero(ct);
+                     break;
+               
+                  case 4:
+                     buscarGenero(ctg);
+                     break;
+               
+                  default:
+                     System.out.print("\nNenhuma das opcoes foi escolhida. Digite apenas numeros de 0 a 4.\n");
+               }
+            }//fim while generos
+         }else if(escolha == 2){
          
-         System.out.println(menu2);
-         System.out.print("O que deseja fazer: ");
-         escolha = s.nextInt();
-      }//fim while
-      
+            while(escolha != -1){
+               String menu2 = "\nMenu de opcoes de filmes: \n0. Voltar para o main menu. \n1. Adicionar Filme\n2. Alterar Filme\n3. Excluir Filme\n4. Busca\n";
+            
+               System.out.println(menu2);
+               System.out.print("O que deseja fazer: ");
+               escolha = s.nextInt();
+               switch(escolha){
+                  case 0:
+                     escolha = -1;
+                     break;
+                     
+                  case 1:
+                     adicionar(ct, ctg);
+                     break;
+               
+                  case 2:
+                     alterar(ct);
+                     break;
+               
+                  case 3:
+                     excluir(ct);
+                     break;
+               
+                  case 4:
+                     buscar(ct, ctg);
+                     break;
+                  
+                  default:
+                     System.out.print("\nNenhuma das opcoes foi escolhida. Digite apenas numeros de 0 a 4.\n");
+               }
+            }//fim while filmes
+         }
+      }
+     
       System.out.print("\nProcesso encerrado.");
+               
    }//end main
 
    /**
@@ -115,7 +123,7 @@ public class CRUD{
    /**
     * Metodo de adicao de filmes
    **/
-   public static void adicionar(Controle ct) throws IOException {
+   public static void adicionar(Controle ct, Controle ctg) throws IOException {
       Scanner s = new Scanner(System.in);
       System.out.print("\nDigite as informacoes do filme a ser adicionado.\n");
    
@@ -142,8 +150,25 @@ public class CRUD{
       f.setSinopse(s.nextLine());
       
       System.out.print("\nID do genero(utilize numeros): ");
-      f.setIDGenero(s.nextInt());
-   
+      int idGenero = s.nextInt();
+      ctg.IDconfirmation(idGenero);
+      System.out.print("Tem certeza que deseja esse genero? [s/n]: ");
+      char confirm = s.next().charAt(0);
+      switch(confirm){
+         case 'n': case 'N':
+            while(confirm == 'n' || confirm == 'N'){
+               System.out.print("ID do genero do filme (digite numeros): ");
+               idGenero = s.nextInt();
+               ctg.IDconfirmation(idGenero);
+               System.out.print("Tem certeza que deseja esse genero? [s/n]: ");
+               confirm = s.next().charAt(0);
+            }
+            break;
+         case 's': case 'S':
+            System.out.print("\nID adicionada com sucesso");
+      }
+      f.setIDGenero(idGenero);
+      
       System.out.print("\nTem certeza que deseja adicionar o filme?[s/n]: ");
       switch(s.next().charAt(0)){
          case 's': case 'S':
@@ -159,9 +184,13 @@ public class CRUD{
       }
    }//end adicionar
    
-   public static void adicionarGenero(Controle ctg) throws IOException {
+   
+   /**
+    * Metodo de adicao de generos
+   **/
+   public static void adicionarGenero(Controle ctg, Controle index) throws IOException {
       Scanner s = new Scanner(System.in);
-      System.out.print("\nDigite as informacoes do genero ser adicionado.\n");
+      System.out.print("\nDigite as informacoes do genero a ser adicionado.\n");
    
       System.out.print("\nNome do genero: ");
       Genero g = new Genero(s.nextLine());
@@ -170,6 +199,7 @@ public class CRUD{
       switch(s.next().charAt(0)){
          case 's': case 'S':
             g.setIDGenero(ctg.novoID());
+            index.novoID();
             byte[] vet = g.getByteArray();
             ctg.vaiPFim();
             ctg.incluir(' ', vet);
@@ -195,11 +225,12 @@ public class CRUD{
    /**
     * Metodo de busca para exclusao e pesquisa de filmes
    **/
-   public static void buscar(Controle ct){
+   public static void buscar(Controle ct, Controle ctg){
       Scanner s = new Scanner(System.in);
       System.out.print("\nDigite a id, do filme, a ser buscada: ");
       int id = s.nextInt();
       ct.mostrarFilme(id);
+      ctg.mostrarGenero(id);
    }//end buscar
 
    /**
@@ -245,6 +276,9 @@ public class CRUD{
                
                   System.out.print("\nSinopse: ");
                   f.setSinopse(s.nextLine());
+                  
+                  System.out.print("\nID do genero: ");
+                  f.setIDGenero(s.nextInt());
                   
                   f.setIDFilme(id);
                   byte[] vet = f.getByteArray();
