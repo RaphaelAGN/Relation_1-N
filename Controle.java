@@ -7,7 +7,6 @@ import java.io.*;
 public class Controle{
 
    private RandomAccessFile raf;
-   private RandomAccessFile raf2;
 
    /**
     * Metodo que busca a posicao do filme a ser excluido e a ser pesquisado
@@ -68,12 +67,34 @@ public class Controle{
             System.out.print("\nDuracao em minutos: "+raf.readShort());
             System.out.print("\nDiretor: "+raf.readUTF());
             System.out.print("\nSinopse: "+raf.readUTF());
-            System.out.print("\nGenero: "+raf.readUTF()+"\n");
+            //System.out.print("\nGenero: "+mostrarGenero()+"\n");
          }
       } catch (IOException e2) {
          e2.printStackTrace();
       }
    }//end mostrar
+   
+    /**
+    * Metodo de confirmacao da ID do genero a ser colocada
+    * @param int id, id a ser buscada 
+   **/
+   public void IDconfirmation(int id){
+      long pos = busca(id);
+      try{
+         if(pos == -1){
+            System.out.println("ID nao encontrada.");
+         }else{
+            raf.seek(pos);
+            raf.readChar();
+            raf.readInt();
+            System.out.print("\nID valida");
+            System.out.print("\nID digitada: "+raf.readInt());
+            System.out.print("\nGenero pertencente a ID: "+raf.readUTF()+"\n");
+         }
+      }catch(IOException e){
+         e.printStackTrace();
+      }
+   }
    
    /**
     * Metodo de mostrar o genero buscado
@@ -88,7 +109,8 @@ public class Controle{
             raf.seek(pos);
             raf.readChar();
             raf.readInt();
-            System.out.print("\nID do Genero: "+raf.readInt());
+            //System.out.print("\nID do Genero: "+
+            raf.readInt();
             System.out.print("\nNome do Genero: "+raf.readUTF()+"\n");
          }
       } catch (IOException e2) {
