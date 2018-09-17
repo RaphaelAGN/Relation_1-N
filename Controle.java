@@ -49,11 +49,15 @@ public class Controle{
    /**
     * Metodo de mostrar o filme buscado
     * @param int id
+    * @return id do genero cadastrado ao filme, utilizado para printar o nome do genero
    **/
-   public void mostrarFilme(int id){
+   public int mostrarFilme(int id){
+      //boolean exist = false;//boolean utilizado para printar o genero na classe principal
+      long pos = this.busca(id);
+      int idGenero = -1;
       try{
-         long pos = this.busca(id);
          if(pos == -1){
+            //exist = false;
             System.out.print("\nFilme nao encontrado.\n");
          }else{
             raf.seek(pos);
@@ -67,22 +71,26 @@ public class Controle{
             System.out.print("\nDuracao em minutos: "+raf.readShort());
             System.out.print("\nDiretor: "+raf.readUTF());
             System.out.print("\nSinopse: "+raf.readUTF());
-            //System.out.print("\nGenero: "+mostrarGenero()+"\n");
+            idGenero = raf.readInt();
          }
       } catch (IOException e2) {
          e2.printStackTrace();
       }
+      return idGenero;
    }//end mostrar
    
     /**
     * Metodo de confirmacao da ID do genero a ser colocada
     * @param int id, id a ser buscada 
+    * @return boolean exist, booleano que confirma existencia de genero e que eh utilizado para listar os filmes linkados ao mesmo
    **/
-   public void IDconfirmation(int id){
+   public boolean IDconfirmation(int id){
       long pos = busca(id);
+      boolean exist = false;
       try{
          if(pos == -1){
             System.out.println("ID nao encontrada.");
+            exist = false;
          }else{
             raf.seek(pos);
             raf.readChar();
@@ -90,10 +98,12 @@ public class Controle{
             System.out.print("\nID valida");
             System.out.print("\nID digitada: "+raf.readInt());
             System.out.print("\nGenero pertencente a ID: "+raf.readUTF()+"\n");
+            exist = true;
          }
       }catch(IOException e){
          e.printStackTrace();
       }
+      return exist;
    }
    
    /**
