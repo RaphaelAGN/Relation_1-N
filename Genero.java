@@ -29,7 +29,7 @@ public class Genero {
 		return this.nomeGenero;			
 	}
 
-	public int getID() {
+	public int getIDGenero() {
 		return this.idGenero;
 	}
 
