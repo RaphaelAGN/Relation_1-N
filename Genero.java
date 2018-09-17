@@ -47,7 +47,7 @@ public class Genero {
 	}//end getByteArray()
 
 	/**
-	 * Recebe um vetor de bytes com o genero e seta no Genero corrente
+	 * Recebe um vetor de bytes com o genero e seta no genero corrente
 	 * @param vetor de bytes com informacoes de um genero do arquivo
 	**/
 	public void setByteArray(byte[] bytes) throws IOException {
