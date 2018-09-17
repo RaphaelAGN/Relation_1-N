@@ -37,11 +37,11 @@ public class CRUD{
                      break;
                
                   case 2:
-                  //alterarGenero(ct);
+                     alterarGenero(ct, ctg);
                      break;
                
                   case 3:
-                  //excluirGenero(ct);
+                     excluirGenero(ctg);
                      break;
                
                   case 4:
@@ -70,7 +70,7 @@ public class CRUD{
                      break;
                
                   case 2:
-                     alterar(ct);
+                     alterar(ct, ctg);
                      break;
                
                   case 3:
@@ -93,7 +93,7 @@ public class CRUD{
    }//end main
 
    /**
-    * Metodo de exclusao
+    * Metodo de exclusao de filmes
    **/
    public static void excluir(Controle ct){
       Scanner s = new Scanner(System.in);
@@ -119,14 +119,39 @@ public class CRUD{
       }
    }//end excluir
    
+   /**
+    * Metodo de exclusao de generos
+   **/
+   public static void excluirGenero(Controle ctg){
+      Scanner s = new Scanner(System.in);
+      int id;
    
+      System.out.print("\nDigite a ID do genero a ser excluido: ");
+      id = s.nextInt();
+   
+      long pos = ctg.busca(id);//utiliza o metodo de busca para pegar a posicao do filme a ser buscado caso o mesmo exista
+   
+      if(pos == -1)
+         System.out.println("\nRegistro nao encontrado.");
+      else{
+         System.out.print("\nTem certeza que deseja excluir?[s/n]: ");
+         switch(s.next().charAt(0)){
+            case 's': case 'S':
+               ctg.excluir(pos);
+               System.out.println("\nRegistro excluido com sucesso.");
+               break;
+            case 'n': case 'N':
+               System.out.println("\nExclusao cancelada.");
+         }
+      }
+   }//end excluir
    /**
     * Metodo de adicao de filmes
    **/
    public static void adicionar(Controle ct, Controle ctg) throws IOException {
       Scanner s = new Scanner(System.in);
       System.out.print("\nDigite as informacoes do filme a ser adicionado.\n");
-   
+      boolean exist;
       System.out.print("\nTitulo: ");
       Filme f = new Filme(s.nextLine());
    
@@ -151,7 +176,13 @@ public class CRUD{
       
       System.out.print("\nID do genero(utilize numeros): ");
       int idGenero = s.nextInt();
-      ctg.IDconfirmation(idGenero);
+      exist = ctg.IDconfirmation(idGenero);
+      while(!exist){
+         System.out.print("\nFavor digitar novamente: ");
+         System.out.print("\nID do genero(utilize numeros): ");
+         idGenero = s.nextInt();
+         exist = ctg.IDconfirmation(idGenero);   
+      }
       System.out.print("Tem certeza que deseja esse genero? [s/n]: ");
       char confirm = s.next().charAt(0);
       switch(confirm){
@@ -159,7 +190,13 @@ public class CRUD{
             while(confirm == 'n' || confirm == 'N'){
                System.out.print("ID do genero do filme (digite numeros): ");
                idGenero = s.nextInt();
-               ctg.IDconfirmation(idGenero);
+               exist = ctg.IDconfirmation(idGenero);
+               while(!exist){
+                  System.out.print("\nFavor digitar novamente: ");
+                  System.out.print("\nID do genero(utilize numeros): ");
+                  idGenero = s.nextInt();
+                  exist = ctg.IDconfirmation(idGenero);
+               }
                System.out.print("Tem certeza que deseja esse genero? [s/n]: ");
                confirm = s.next().charAt(0);
             }
@@ -190,19 +227,23 @@ public class CRUD{
    **/
    public static void adicionarGenero(Controle ctg, Controle index) throws IOException {
       Scanner s = new Scanner(System.in);
+      Index i = new Index();
       System.out.print("\nDigite as informacoes do genero a ser adicionado.\n");
    
       System.out.print("\nNome do genero: ");
       Genero g = new Genero(s.nextLine());
-   
+      
       System.out.print("\nTem certeza que deseja adicionar o genero?[s/n]: ");
       switch(s.next().charAt(0)){
          case 's': case 'S':
             g.setIDGenero(ctg.novoID());
-            index.novoID();
+            i.setID(index.novoID());
             byte[] vet = g.getByteArray();
+            byte[] vetI = i.getByteArray();
             ctg.vaiPFim();
             ctg.incluir(' ', vet);
+            index.vaiPFim();
+            index.incluir(' ', vetI);
             System.out.println("\nGenero adicionado com sucesso!\n");
             break;
          case 'n': case 'N':
@@ -227,18 +268,20 @@ public class CRUD{
    **/
    public static void buscar(Controle ct, Controle ctg){
       Scanner s = new Scanner(System.in);
-      System.out.print("\nDigite a id, do filme, a ser buscada: ");
+      //boolean exist;
+      System.out.print("\nDigite a id do filme a ser buscado: ");
       int id = s.nextInt();
-      ct.mostrarFilme(id);
-      ctg.mostrarGenero(id);
+      int idGenero = ct.mostrarFilme(id);
+      ctg.mostrarGenero(idGenero);
    }//end buscar
 
    /**
-    * Metodo de alteracao
+    * Metodo de alteracao de filmes
    **/
-   public static void alterar(Controle ct){
+   public static void alterar(Controle ct, Controle ctg){
       Scanner s = new Scanner(System.in);
       int id;
+      boolean exist;
       System.out.print("\nDigite a ID do filme a ser alterado: ");
       id = s.nextInt();
       long pos = ct.busca(id);
@@ -277,22 +320,91 @@ public class CRUD{
                   System.out.print("\nSinopse: ");
                   f.setSinopse(s.nextLine());
                   
-                  System.out.print("\nID do genero: ");
-                  f.setIDGenero(s.nextInt());
+                  System.out.print("\nID do genero(utilize numeros): ");
+                  int idGenero = s.nextInt();
+                  exist = ctg.IDconfirmation(idGenero);
+                  while(!exist){
+                     System.out.print("\nFavor digitar novamente: ");
+                     System.out.print("\nID do genero(utilize numeros): ");
+                     idGenero = s.nextInt();
+                     exist = ctg.IDconfirmation(idGenero);   
+                  }
+                  System.out.print("Tem certeza que deseja esse genero? [s/n]: ");
+                  char confirm = s.next().charAt(0);
+                  switch(confirm){
+                     case 'n': case 'N':
+                        while(confirm == 'n' || confirm == 'N'){
+                           System.out.print("ID do genero do filme (digite numeros): ");
+                           idGenero = s.nextInt();
+                           exist = ctg.IDconfirmation(idGenero);
+                           while(!exist){
+                              System.out.print("\nFavor digitar novamente: ");
+                              System.out.print("\nID do genero(utilize numeros): ");
+                              idGenero = s.nextInt();
+                              exist = ctg.IDconfirmation(idGenero);   
+                           }
+                           System.out.print("Tem certeza que deseja esse genero? [s/n]: ");
+                           confirm = s.next().charAt(0);
+                        }
+                        break;
+                     case 's': case 'S':
+                        System.out.print("\nID alterada com sucesso");
+                        f.setIDGenero(idGenero);
+                  }
                   
                   f.setIDFilme(id);
                   byte[] vet = f.getByteArray();
                   ct.vaiPFim();
                   ct.incluir(' ', vet);
-                  System.out.println("\nFilme alterado com sucesso!\n");
+                  System.out.print("\nFilme alterado com sucesso!\n");
                         
                }catch(IOException E){
                   E.printStackTrace();
                }
                break;
             case 'n': case 'N':
-               System.out.println("\nAlteracao cancelada.");
+               System.out.print("\nAlteracao cancelada.");
          }
       }
    }//end alterar
+   
+   /**
+    * Metodo de alteracao de generos
+   **/   
+   public static void alterarGenero(Controle ct, Controle ctg){
+      Scanner s = new Scanner(System.in);
+      int idGenero;
+      Genero g = new Genero();
+      System.out.print("\nDigite a id do genero a ser alterado: ");
+      idGenero = s.nextInt();
+      long pos = ctg.busca(idGenero);
+      if(pos == -1){
+         System.out.print("\nGenero nao encontrado.\n");
+      }else{
+         System.out.print("\nTem certeza que deseja alterar? (A alteracao resultara na exclusao dos dados atuais) [s/n]:  ");
+         switch(s.next().charAt(0)){
+            case 's': case 'S':
+               ctg.excluir(pos);
+               System.out.println("\nRegistro excluido com sucesso");
+               try{
+                  s.nextLine();
+                  System.out.print("\nDigite as informacoes do genero a ser adicionado.\n");
+               
+                  System.out.print("\nNome do genero: ");
+                  g.setNomeGenero(s.nextLine());
+                  
+                  g.setIDGenero(idGenero);
+                  byte[] vet = g.getByteArray();
+                  ctg.vaiPFim();
+                  ctg.incluir(' ', vet);
+                  System.out.print("\nGenero alterado com sucesso!\n");
+               }catch(IOException E){
+                  E.printStackTrace();
+               }
+               break;
+            case 'n': case 'N':
+               System.out.print("\nAlteracao cancelada.");
+         }//end switch     
+      }//end else
+   }//end alterarGenero
 }//end class
